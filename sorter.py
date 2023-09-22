@@ -1,5 +1,6 @@
 import re
 import os
+import sys
 import shutil
 from pathlib import Path
 from collections import defaultdict
@@ -16,6 +17,7 @@ MARK_ARCHIVE = "archives"
 MARK_DOCUMENT = "documents"
 MARK_SCREENSHOT = "screenshots"
 MARK_TECH = "tech"
+MARK_TORRENT = "torrent"
 
 MARK_DANBOORU = "danbooru"
 TOKEN_DANBOORU_ARTIST = "danbooru:artist"
@@ -51,8 +53,10 @@ class Item:
             mark = MARK_DOCUMENT
         elif extension.lower() in ["json", "sql", "sh", "py"]:
             mark = MARK_TECH
+        elif extension.lower() in ["torrent"]:
+            mark = MARK_TORRENT
         # Special
-        elif "_drawn_by_" in self.item:
+        elif "_drawn_by_" in self.item or "__sample-" in self.item:
             mark = MARK_DANBOORU
             # danbooru_tokens = self.load_danbooru_tokens()
             # tokens.update(danbooru_tokens)
@@ -61,7 +65,7 @@ class Item:
             mark = MARK_TELEGRAM
         elif self.item.startswith("IMG_") and extension.lower() == "jpg":
             mark = MARK_CAMERA
-        elif self.item.startswith("Screnshot") or self.item.startswith("Снимок экрана"):
+        elif self.item.startswith("Screenshot") or self.item.startswith("Снимок экрана"):
             mark = MARK_SCREENSHOT
         # Hashes
         elif len(self.item) == 15 and extension == "jpg":
@@ -147,7 +151,7 @@ class Outputer:
 
 
 if __name__ == "__main__":
-    source_directory = "<set here>"
+    source_directory = sys.argv[1]
     target_directory = source_directory
 
     manager = Manager(source_directory)    
